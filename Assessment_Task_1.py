@@ -26,11 +26,11 @@ def calculate_agreement(population, row, col, external=0.0):
     neighbours = []
     if row > 0:
         neighbours.append(population[row + 1][col])
-    if row < m:
+    if row < m -1:
         neighbours.append(population[row-1][col])
     if col > 0:
         neighbours.append(population[row][col +1])
-    if col < n:
+    if col < n -1:
         neighbours.append(population[row][col - 1])
 
     print(neighbours)
