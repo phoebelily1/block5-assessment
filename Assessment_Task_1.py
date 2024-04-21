@@ -22,11 +22,17 @@ def calculate_agreement(population, row, col, external=0.0):
             change_in_agreement (float)
     '''
 
-    population_shape = population.shape
+    m,n = population.shape
     neighbours = []
     if row > 0:
         neighbours.append(population[row + 1][col])
-    if row < n:
+    if row < m:
+        neighbours.append(population[row-1][col])
+    if col > 0:
+        neighbours.append(population[row][col +1])
+    if col < n:
+        neighbours.append(population[row][col - 1])
+
 
 
     return np.random.random() * population
