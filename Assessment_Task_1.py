@@ -33,7 +33,7 @@ def calculate_agreement(population, row, col, external=0.0):
     if col < n:
         neighbours.append(population[row][col - 1])
 
-
+    print(neighbours)
 
     return np.random.random() * population
 
@@ -63,9 +63,9 @@ def plot_ising(im, population):
     '''
 
 
-new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
-im.set_data(new_im)
-plt.pause(0.1)
+    new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
+    im.set_data(new_im)
+    plt.pause(0.1)
 
 
 def test_ising():
@@ -74,33 +74,33 @@ def test_ising():
     '''
 
 
-print("Testing ising model calculations")
-population = -np.ones((3, 3))
-assert (calculate_agreement(population, 1, 1) == 4), "Test 1"
+    print("Testing ising model calculations")
+    population = -np.ones((3, 3))
+    assert (calculate_agreement(population, 1, 1) == 4), "Test 1"
 
-population[1, 1] = 1.
-assert (calculate_agreement(population, 1, 1) == -4), "Test 2"
+    population[1, 1] = 1.
+    assert (calculate_agreement(population, 1, 1) == -4), "Test 2"
 
-population[0, 1] = 1.
-assert (calculate_agreement(population, 1, 1) == -2), "Test 3"
+    population[0, 1] = 1.
+    assert (calculate_agreement(population, 1, 1) == -2), "Test 3"
 
-population[1, 0] = 1.
-assert (calculate_agreement(population, 1, 1) == 0), "Test 4"
+    population[1, 0] = 1.
+    assert (calculate_agreement(population, 1, 1) == 0), "Test 4"
 
-population[2, 1] = 1.
-assert (calculate_agreement(population, 1, 1) == 2), "Test 5"
+    population[2, 1] = 1.
+    assert (calculate_agreement(population, 1, 1) == 2), "Test 5"
 
-population[1, 2] = 1.
-assert (calculate_agreement(population, 1, 1) == 4), "Test 6"
+    population[1, 2] = 1.
+    assert (calculate_agreement(population, 1, 1) == 4), "Test 6"
 
-"Testing external pull"
-population = -np.ones((3, 3))
-assert (calculate_agreement(population, 1, 1, 1) == 3), "Test 7"
-assert (calculate_agreement(population, 1, 1, -1) == 5), "Test 8"
-assert (calculate_agreement(population, 1, 1, 10) == 14), "Test 9"
-assert (calculate_agreement(population, 1, 1, -10) == -6), "Test 10"
+    "Testing external pull"
+    population = -np.ones((3, 3))
+    assert (calculate_agreement(population, 1, 1, 1) == 3), "Test 7"
+    assert (calculate_agreement(population, 1, 1, -1) == 5), "Test 8"
+    assert (calculate_agreement(population, 1, 1, 10) == 14), "Test 9"
+    assert (calculate_agreement(population, 1, 1, -10) == -6), "Test 10"
 
-print("Tests passed")
+    print("Tests passed")
 
 
 def ising_main(population, alpha=None, external=0.0):
@@ -126,7 +126,8 @@ This section contains code for the main function- you should write some code for
 
 
 def main():
-    print('yes')
+    population = -np.ones((3,5))
+    print(calculate_agreement(population, 1, 1))
 
 # You should write some code for handling flags here
 
