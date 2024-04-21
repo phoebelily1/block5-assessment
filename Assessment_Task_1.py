@@ -33,9 +33,7 @@ def calculate_agreement(population, row, col, external=0.0):
     if col < n -1:
         neighbours.append(population[row][col - 1])
 
-    print(neighbours)
-
-    return np.random.random() * population
+    return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # uses formula for Di
 
 
 def ising_step(population, external=0.0):
@@ -97,8 +95,8 @@ def test_ising():
     population = -np.ones((3, 3))
     assert (calculate_agreement(population, 1, 1, 1) == 3), "Test 7"
     assert (calculate_agreement(population, 1, 1, -1) == 5), "Test 8"
-    assert (calculate_agreement(population, 1, 1, 10) == 14), "Test 9"
-    assert (calculate_agreement(population, 1, 1, -10) == -6), "Test 10"
+    assert (calculate_agreement(population, 1, 1, -10) == 14), "Test 9"
+    assert (calculate_agreement(population, 1, 1, 10) == -6), "Test 10"
 
     print("Tests passed")
 
@@ -126,8 +124,7 @@ This section contains code for the main function- you should write some code for
 
 
 def main():
-    population = -np.ones((3,5))
-    print(calculate_agreement(population, 1, 1))
+    test_ising()
 
 # You should write some code for handling flags here
 
