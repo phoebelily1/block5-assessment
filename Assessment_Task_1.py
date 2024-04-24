@@ -51,6 +51,8 @@ def ising_step(population, external=0.0):
 
     if agreement < 0:
         population[row, col] *= -1
+    elif np.random.rand() < np.exp(-agreement / alpha):
+        population[row, col] *= -1
 
 
 # Your code for task 1 goes here
