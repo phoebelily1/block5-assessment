@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import argparse
 
 
 
@@ -126,7 +127,17 @@ This section contains code for the main function- you should write some code for
 
 
 def main():
-    test_ising()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-ising_model',action='store_true')
+    parser.add_argument('-external',type=float,default=0.0)
+    parser.add_argument('-test_ising',action='store_true')
+    parser.add_argument('-alpha',type=float,default=1.0)
+    args = parser.parse_args()
+    if args.ising_model:
+        population = np.random.choice([-1, 1], size=(10, 10))
+        ising_main(population,args.external,args.alpha)
+    if args.test_ising:
+        test_ising()
 
 # You should write some code for handling flags here
 
