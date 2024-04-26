@@ -39,12 +39,11 @@ class NetworkSimulation:
         """
         nodes, edges = self.create_ring_network(n, k)
         for edge in list(edges):
-            if random.random() < p:
+            if random.random() < p/2:
                 new_node = random.choice(nodes)
                 # Ensure new edge does not create self-loops or duplicate edges
                 while new_node == edge[0] or (edge[0], new_node) in edges or (new_node, edge[0]) in edges:
                     new_node = random.choice(nodes)
-                edges.remove(edge)  # Remove the original edge
                 edges.append((edge[0], new_node))  # Add the new edge
         return nodes, edges
 
