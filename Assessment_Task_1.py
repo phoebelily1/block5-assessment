@@ -56,14 +56,20 @@ def ising_step(population, external=0.0):
             external (float) - optional - the magnitude of any external "pull" on opinion
     '''
 
+    # Extract dimensions of the population matrix
     n_rows, n_cols = population.shape
+
+    # Randomly selects a cell in the population matrix
     row = np.random.randint(0, n_rows)
     col = np.random.randint(0, n_cols)
 
+    #Calculate the agreement of the selected cell with its neighbours
     agreement = calculate_agreement(population, row, col, external=0.0)
 
+    # If the agreement is negative, flip the opinion of the selected cell
     if agreement < 0:
         population[row, col] *= -1
+    # If the agreement is positive, calculate a probability to accept the flip
     elif np.random.rand() < np.exp(-agreement / alpha):
         population[row, col] *= -1
     #uses formula to accept neagtive flips, basically generating a random probability and then compares to formula
