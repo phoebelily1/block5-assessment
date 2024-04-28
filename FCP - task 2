@@ -1,0 +1,85 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def initial_opinions(pop_size):
+    return np.random.rand(pop_size)
+'''
+this function generates an array of random numbers representing
+initial opinions of the population.
+'''
+
+def opinions_updated(population, coupling, threshold):
+    new_pop = population.copy()
+    for i in range(len(population)):
+        neighbour_choice = np.random.choice([i-1, i+1])
+        if neighbour_choice < 0 or neighbour_choice >= len(population):
+            continue
+        if abs(population[i] - population[neighbour_choice]) < threshold:
+            mean_opinion = (population[i] + population[neighbour_choice]) / 2
+            new_pop[i] += coupling * (mean_opinion - population[i])
+            new_pop[neighbour_choice] += coupling * (mean_opinion - population[neighbour_choice])
+    return new_pop
+
+'''
+This function updates opinions based on neighbours opinions by iterating through
+each individual, selecting one of their neighbours and calculates difference in opinion.
+If difference < threshold, it updates opinion towards the mean. It then returns updated
+opinions.
+'''
+
+def distribution_opinions(population):
+    plt.hist(population, bins=20)
+    plt.title('Opinion Distribution')
+    plt.xlabel('Opinion')
+    plt.ylabel('Frequency')
+    plt.show()
+
+'''
+This function plots a histogram for distribution of opinions within population.
+'''
+
+def defuant_model(pop_size = 100, coupling = 0.2, threshold = 0.2, iterations = 100):
+    population = initial_opinions(pop_size)
+    pop_history = [population.copy()]
+    for i in range(iterations):
+        population = opinions_updated(population, coupling, threshold)
+        pop_history.append(population.copy())
+    plot_pop_history(pop_history)
+
+
+'''
+This function runs the defuant model, first by initialising the population, then iterating
+through and updating opinions. It then plots the distribution of opinions. It has a list
+to store each population at each time step.
+'''
+
+def plot_pop_history(pop_history):
+    plt.figure(figsize=(8, 6))
+    for i, population in enumerate(pop_history):
+        plt.plot([i] * len(population), population, 'bo', markersize=1)  # Plot each member's opinion at current timestep
+    plt.title('Opinions over time')
+    plt.xlabel('Timestep')
+    plt.ylabel('Opinion')
+    plt.show()
+
+'''
+This function plots each persons opinion at each timestep, as it loops through.
+'''
+
+def test_defuant():
+    population = np.array([0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9])
+    updated_pop = opinions_updated(population, coupling = 0.1, threshold = 0.3)
+
+'''
+This test function tests the opinions_updated function updates correctly based on parameters.
+'''
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Defuant Model Simulation")
+    parser.add_argument("-coupling", type=float, default=0.2, help="Coupling parameter (default: 0.2)")
+    parser.add_argument("-threshold", type=float, default=0.2, help="Threshold for interaction (default: 0.2)")
+    args = parser.parse_args()
+
+    defuant_model(threshold=args.threshold, coupling=args.coupling)
+
