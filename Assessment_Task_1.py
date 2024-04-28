@@ -72,7 +72,7 @@ def ising_step(population, external=0.0):
     # If the agreement is positive, calculate a probability to accept the flip
     elif np.random.rand() < np.exp(-agreement / alpha):
         population[row, col] *= -1
-    # Uses formula to accept neagtive flips, basically generating a random probability and then compares to formula
+    # Uses formula to accept negative flips, basically generating a random probability and then compares to formula
 
 
 def plot_ising(im, population):
@@ -80,14 +80,14 @@ def plot_ising(im, population):
     This function will display a plot of the Ising model
     '''
 
-    # Convert the Ising model representation to an image format
-    # Assign a value of 255 to -1 (spin down) and 1 to 1 (spin up)
+    # Converts the Ising model representation to an image format
+    # Assigns a value of 255 to -1 (spin down) and 1 to 1 (spin up)
     new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
 
     # Update the image data for the plot with the new Ising model representation
     im.set_data(new_im)
-    
-    # Pause for a short duration to allow for plot rendering
+
+    # Pause for a short duration for plot rendering
     plt.pause(0.1)
 
 
@@ -96,14 +96,17 @@ def test_ising():
     This function will test the calculate_agreement function in the Ising model
     '''
 
-
     print("Testing ising model calculations")
+
+    # Test for when the selected element is surrounded by -1s
     population = -np.ones((3, 3))
     assert (calculate_agreement(population, 1, 1) == 4), "Test 1"
 
+    # Test for when the selected element is surrounded by 1s
     population[1, 1] = 1.
     assert (calculate_agreement(population, 1, 1) == -4), "Test 2"
 
+    # Tests for when one of the adjacent elements is flipped to 1
     population[0, 1] = 1.
     assert (calculate_agreement(population, 1, 1) == -2), "Test 3"
 
@@ -116,7 +119,8 @@ def test_ising():
     population[1, 2] = 1.
     assert (calculate_agreement(population, 1, 1) == 4), "Test 6"
 
-    "Testing external pull"
+    print("Testing external pull")
+    # Testing the effect of an external pull on the selected element
     population = -np.ones((3, 3))
     assert (calculate_agreement(population, 1, 1, 1) == 3), "Test 7"
     assert (calculate_agreement(population, 1, 1, -1) == 5), "Test 8"
@@ -126,18 +130,24 @@ def test_ising():
     print("Tests passed")
 
 
-def ising_main(population, alpha=1.0, external=0.0):
+def ising_main(population, alpha=None, external=0.0):
+    # Creates a figure for plotting
     fig = plt.figure()
+    # Adds a subplot to the figure and turns of axis
     ax = fig.add_subplot(111)
     ax.set_axis_off()
+    #Displays initial state of the population matrix
     im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
 
     # Iterating an update 100 times
     for frame in range(100):
         # Iterating single steps 1000 times to form an update
         for step in range(1000):
+            # Performs 1 step of the update
             ising_step(population, external)
+        # Prints the current step number
         print('Step:', frame, end='\r')
+        # Updates the plot
         plot_ising(im, population)
 
 
@@ -149,19 +159,20 @@ This section contains code for the main function- you should write some code for
 
 
 def main():
-    parser = argparse.ArgumentParser() # create parser object
-    parser.add_argument('-ising_model',action='store_true') # add ising_model flag
+    parser = argparse.ArgumentParser() # Create parser object
+
+    parser.add_argument('-ising_model',action='store_true') # Cdd ising_model flag
     parser.add_argument('-external',type=float,default=0.0) # add external flag
     parser.add_argument('-test_ising',action='store_true') # add test_ising flag
     parser.add_argument('-alpha',type=float,default=1.0) # add alpha flag
     args = parser.parse_args() #obtains arguments
+
+
     if args.ising_model: #if given ising_model
         population = np.random.choice([-1, 1], size=(10, 10)) #initalise random populaion
         ising_main(population,args.external,args.alpha) #run ising_main
     if args.test_ising:
         test_ising()
-
-# You should write some code for handling flags here
 
 if __name__ == "__main__":
     main()
