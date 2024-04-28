@@ -14,35 +14,39 @@ This section contains code for the Ising Model - task 1 in the assignment
 
 def calculate_agreement(population, row, col, external=0.0):
     '''
-    This function should return the extent to which a cell agrees with its neighbours.
-    Inputs: population (numpy array)
-            row (int)
-            col (int)
-            external (float)
+    This function should return the extent to which a cell agrees with its neighbours by providing a list of
+    neighbouring (adajcent) people's opinions.
+    Inputs: population (numpy array) - Matrix representing the population and their opinions.
+            row (int) - Row index of current cell
+            col (int) - Column index of current cell
+            external (float) - External influence on the current cell's opinion (default is 0.0).
     Returns:
-            change_in_agreement (float)
+            change_in_agreement (float) - - Measure of agreement change in the cell's opinion.
     '''
 
-    m, n = population.shape  # obtains rows and columns of matrix
+    m, n = population.shape  # Obtains rows and columns of matrix
     neighbours = []
+    # Checks neighbouring cells above and below
     if row > 0:
-        neighbours.append(population[row - 1][col])  # if not on top row
+        neighbours.append(population[row - 1][col])  # If not on top row
     else:
-        neighbours.append(population[-1][col])  # wraps around
+        neighbours.append(population[-1][col])  # Wraps around to the bottom row
     if row < m - 1:
-        neighbours.append(population[row + 1][col])  # if not on bottom row
+        neighbours.append(population[row + 1][col])  # If not on bottom row
     else:
-        neighbours.append(population[0])[col]
+        neighbours.append(population[0])[col] # Wraps around to the top row
+
+    #Checks neighbouring cells to the left and right
     if col > 0:
-        neighbors.append(population[row][col - 1])  # if not in first col
+        neighbors.append(population[row][col - 1])  # If not in first col
     else:
-        neighbours.append(population[row][-1])
+        neighbours.append(population[row][-1]) # Wraps around to the last col
     if col < n - 1:
         neighbours.append(population[row][col + 1])  # if not in last col
     else:
-        neighbours.append(population[row][0])
+        neighbours.append(population[row][0]) # Wraps around to the first col
 
-    return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # uses formula for Di
+    return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # Uses formula for Di
 
 
 def ising_step(population, external=0.0):
@@ -62,15 +66,14 @@ def ising_step(population, external=0.0):
         population[row, col] *= -1
     elif np.random.rand() < np.exp(-agreement / alpha):
         population[row, col] *= -1
+    #uses formula to accept neagtive flips, basically generating a random probability and then compares to formula
 
 
-# Your code for task 1 goes here
 
 def plot_ising(im, population):
     '''
     This function will display a plot of the Ising model
     '''
-
 
     new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
     im.set_data(new_im)
@@ -112,7 +115,7 @@ def test_ising():
     print("Tests passed")
 
 
-def ising_main(population, alpha=None, external=0.0):
+def ising_main(population, alpha=1.0, external=0.0):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_axis_off()
@@ -135,15 +138,15 @@ This section contains code for the main function- you should write some code for
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-ising_model',action='store_true')
-    parser.add_argument('-external',type=float,default=0.0)
-    parser.add_argument('-test_ising',action='store_true')
-    parser.add_argument('-alpha',type=float,default=1.0)
-    args = parser.parse_args()
-    if args.ising_model:
-        population = np.random.choice([-1, 1], size=(10, 10))
-        ising_main(population,args.external,args.alpha)
+    parser = argparse.ArgumentParser() # create parser object
+    parser.add_argument('-ising_model',action='store_true') # add ising_model flag
+    parser.add_argument('-external',type=float,default=0.0) # add external flag
+    parser.add_argument('-test_ising',action='store_true') # add test_ising flag
+    parser.add_argument('-alpha',type=float,default=1.0) # add alpha flag
+    args = parser.parse_args() #obtains arguments
+    if args.ising_model: #if given ising_model
+        population = np.random.choice([-1, 1], size=(10, 10)) #initalise random populaion
+        ising_main(population,args.external,args.alpha) #run ising_main
     if args.test_ising:
         test_ising()
 
