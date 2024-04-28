@@ -23,16 +23,24 @@ def calculate_agreement(population, row, col, external=0.0):
             change_in_agreement (float)
     '''
 
-    m,n = population.shape
+    m, n = population.shape  # obtains rows and columns of matrix
     neighbours = []
     if row > 0:
-        neighbours.append(population[row + 1][col])
-    if row < m -1:
-        neighbours.append(population[row-1][col])
+        neighbours.append(population[row - 1][col])  # if not on top row
+    else:
+        neighbours.append(population[-1][col])  # wraps around
+    if row < m - 1:
+        neighbours.append(population[row + 1][col])  # if not on bottom row
+    else:
+        neighbours.append(population[0])[col]
     if col > 0:
-        neighbours.append(population[row][col +1])
-    if col < n -1:
-        neighbours.append(population[row][col - 1])
+        neighbors.append(population[row][col - 1])  # if not in first col
+    else:
+        neighbours.append(population[row][-1])
+    if col < n - 1:
+        neighbours.append(population[row][col + 1])  # if not in last col
+    else:
+        neighbours.append(population[row][0])
 
     return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # uses formula for Di
 
