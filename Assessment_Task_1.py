@@ -161,17 +161,20 @@ This section contains code for the main function- you should write some code for
 def main():
     parser = argparse.ArgumentParser() # Create parser object
 
-    parser.add_argument('-ising_model',action='store_true') # Cdd ising_model flag
-    parser.add_argument('-external',type=float,default=0.0) # add external flag
-    parser.add_argument('-test_ising',action='store_true') # add test_ising flag
-    parser.add_argument('-alpha',type=float,default=1.0) # add alpha flag
-    args = parser.parse_args() #obtains arguments
+    parser.add_argument('-ising_model',action='store_true') # Add ising_model flag
+    parser.add_argument('-external',type=float,default=0.0) # Add external flag
+    parser.add_argument('-test_ising',action='store_true') # Add test_ising flag
+    parser.add_argument('-alpha',type=float,default=1.0) # Add alpha flag
+    args = parser.parse_args() # Obtains arguments
 
+    # If given ising_model
+    if args.ising_model:
+        population = np.random.choice([-1, 1], size=(10, 10)) # Initalise random population
+        ising_main(population,args.external,args.alpha) # Run ising_main
 
-    if args.ising_model: #if given ising_model
-        population = np.random.choice([-1, 1], size=(10, 10)) #initalise random populaion
-        ising_main(population,args.external,args.alpha) #run ising_main
+    # If test_ising flag is present
     if args.test_ising:
+        # Run test_ising function
         test_ising()
 
 if __name__ == "__main__":
