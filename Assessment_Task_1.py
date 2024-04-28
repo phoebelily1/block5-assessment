@@ -72,8 +72,7 @@ def ising_step(population, external=0.0):
     # If the agreement is positive, calculate a probability to accept the flip
     elif np.random.rand() < np.exp(-agreement / alpha):
         population[row, col] *= -1
-    #uses formula to accept neagtive flips, basically generating a random probability and then compares to formula
-
+    # Uses formula to accept neagtive flips, basically generating a random probability and then compares to formula
 
 
 def plot_ising(im, population):
@@ -81,8 +80,14 @@ def plot_ising(im, population):
     This function will display a plot of the Ising model
     '''
 
+    # Convert the Ising model representation to an image format
+    # Assign a value of 255 to -1 (spin down) and 1 to 1 (spin up)
     new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
+
+    # Update the image data for the plot with the new Ising model representation
     im.set_data(new_im)
+    
+    # Pause for a short duration to allow for plot rendering
     plt.pause(0.1)
 
 
