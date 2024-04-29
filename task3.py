@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
+
 class Node:
     def __init__(self, value, number, connections=None):
         self.index = number
