@@ -296,6 +296,7 @@ def main():
     parser.add_argument('-external',type=float,default=0.0) # Add external flag
     parser.add_argument('-test_ising',action='store_true') # Add test_ising flag
     parser.add_argument('-alpha',type=float,default=1.0) # Add alpha flag
+    parser.add_argument('-use_network',action='store',type=int)
     args = parser.parse_args() # Obtains arguments
 
     # If given ising_model
@@ -307,6 +308,9 @@ def main():
     if args.test_ising:
         # Run test_ising function
         test_ising()
+
+    if args.use_network:
+        ising_main(Network(),args.alpha,args.external,args.use_network)
 
 
 
