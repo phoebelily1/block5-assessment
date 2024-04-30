@@ -21,7 +21,7 @@ class Network:
         else:
             self.nodes = nodes
 
-    def create_ring_network(self, n, k=1):
+    def make_ring_network(self, n,k=1):
         """
         Creates a ring network where each node is connected to its k nearest neighbors on both sides.
         Parameters:
@@ -30,16 +30,18 @@ class Network:
         Returns:
             tuple: A tuple containing the list of nodes and the list of edges.
         """
+        self.nodes = []
         nodes = list(range(n))
-        edges = []
         for node in nodes:
+            edges = []
             for i in range(1, k + 1):
                 edges.append((node, (node - i) % n))  # Connect to k previous neighbors (circular)
                 edges.append((node, (node + i) % n))  # Connect to k next neighbors (circular)
-        return nodes, edges
+            self.nodes.append(Node(np.random.choice([1.0,-1.0]),node,edges))
 
 
-    def create_small_world_network(self, n, p=0.2, k=2):
+
+    def make_small_world_network(self, n, p=0.2):
         """
         Generates a small-world network starting from a ring network by randomly re-wiring edges.
         Parameters:
@@ -49,15 +51,16 @@ class Network:
         Returns:
             tuple: A tuple containing the list of nodes and the list of edges.
         """
-        nodes, edges = self.create_ring_network(n, k)
-        for edge in list(edges):
-            if random.random() < p / 2:
+        self.nodes=[]
+        self.create_ring_network(n,k=2)
+        for i, node in enumerate(self.nodes):
+            if np.random.rand() < p:
                 new_node = random.choice(nodes)
                 # Ensure new edge does not create self-loops or duplicate edges
                 while new_node == edge[0] or (edge[0], new_node) in edges or (new_node, edge[0]) in edges:
                     new_node = random.choice(nodes)
-                edges.append((edge[0], new_node))  # Add the new edge
-        return nodes, edges
+                node.connections[new_node.index] = new_node.index
+                self.nodes[new_node.index].connections[i] = i
 
 
     def plot(self):
