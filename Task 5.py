@@ -237,26 +237,38 @@ def test_ising():
     print("Tests passed")
 
 
-def ising_main(population, alpha=None, external=0.0):
-    # Creates a figure for plotting
-    fig = plt.figure()
-    # Adds a subplot to the figure and turns of axis
-    ax = fig.add_subplot(111)
-    ax.set_axis_off()
-    #Displays initial state of the population matrix
-    im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
+def ising_main(population, alpha=None, external=0.0,N=10):
+    if type(population) != Network:
+        # Creates a figure for plotting
+        fig = plt.figure()
+        # Adds a subplot to the figure and turns of axis
+        ax = fig.add_subplot(111)
+        ax.set_axis_off()
+        #Displays initial state of the population matrix
+        im = ax.imshow(population, interpolation='none', cmap='RdPu_r')
 
-    # Iterating an update 100 times
-    for frame in range(100):
-        # Iterating single steps 1000 times to form an update
-        for step in range(1000):
-            # Performs 1 step of the update
-            ising_step(population, external)
-        # Prints the current step number
-        print('Step:', frame, end='\r')
-        # Updates the plot
-        plot_ising(im, population)
-
+        # Iterating an update 100 times
+        for frame in range(100):
+            # Iterating single steps 1000 times to form an update
+            for step in range(1000):
+                # Performs 1 step of the update
+                ising_step(population, external)
+            # Prints the current step number
+            print('Step:', frame, end='\r')
+            # Updates the plot
+            plot_ising(im, population)
+    else:
+        population.make_small_world_network(N,p=0.2)
+        # Iterating an update 100 times
+        for frame in range(100):
+            # Iterating single steps 1000 times to form an update
+            for step in range(1000):
+                # Performs 1 step of the update
+                ising_step(population, external, alpha)
+            # Prints the current step number
+            print('Step:', frame, end='\r')
+            # Updates the plot
+            population.plot()
 
 '''
 ==============================================================================================================
@@ -284,6 +296,7 @@ def main():
     if args.test_ising:
         # Run test_ising function
         test_ising()
+
 
 
 
