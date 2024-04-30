@@ -113,7 +113,7 @@ class Network:
 
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
 
-def calculate_agreement(population, row, col, external=0.0):
+def calculate_agreement(population, row=0, col=0, node_index=0, external=0.0):
     '''
     This function should return the extent to which a cell agrees with its neighbours by providing a list of
     neighbouring (adajcent) people's opinions.
@@ -125,31 +125,34 @@ def calculate_agreement(population, row, col, external=0.0):
             change_in_agreement (float) - - Measure of agreement change in the cell's opinion.
     '''
 
+    if type(population) != Network:
+        m, n = population.shape  # Obtains rows and columns of matrix
+        neighbours = []
+        # Checks neighbouring cells above and below
+        if row > 0:
+            neighbours.append(population[row - 1][col])  # If not on top row
+        else:
+            neighbours.append(population[-1][col])  # Wraps around to the bottom row
+        if row < m - 1:
+            neighbours.append(population[row + 1][col])  # If not on bottom row
+        else:
+            neighbours.append(population[0])[col] # Wraps around to the top row
 
-    m, n = population.shape  # Obtains rows and columns of matrix
-    neighbours = []
-    # Checks neighbouring cells above and below
-    if row > 0:
-        neighbours.append(population[row - 1][col])  # If not on top row
-    else:
-        neighbours.append(population[-1][col])  # Wraps around to the bottom row
-    if row < m - 1:
-        neighbours.append(population[row + 1][col])  # If not on bottom row
-    else:
-        neighbours.append(population[0])[col] # Wraps around to the top row
+        #Checks neighbouring cells to the left and right
+        if col > 0:
+            neighbours.append(population[row][col - 1])  # If not in first col
+        else:
+            neighbours.append(population[row][-1]) # Wraps around to the last col
+        if col < n - 1:
+            neighbours.append(population[row][col + 1])  # if not in last col
+        else:
+            neighbours.append(population[row][0]) # Wraps around to the first col
 
-    #Checks neighbouring cells to the left and right
-    if col > 0:
-        neighbours.append(population[row][col - 1])  # If not in first col
+        return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # Uses formula for Di
     else:
-        neighbours.append(population[row][-1]) # Wraps around to the last col
-    if col < n - 1:
-        neighbours.append(population[row][col + 1])  # if not in last col
-    else:
-        neighbours.append(population[row][0]) # Wraps around to the first col
-
-    return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # Uses formula for Di
-
+        node = population.nodes[node_index]
+        neighbours = [node.value for node in population.nodes if node in population]
+        return np.sum([i*node.value for i in neighbours]) + external * node.value
 
 def ising_step(population, external=0.0, alpha=1.0):
     '''
