@@ -22,15 +22,11 @@ def calculate_agreement(population, row, col, external=0.0):
             change_in_agreement (float) - - Measure of agreement change in the cell's opinion.
     '''
 
-<<<<<<< Updated upstream
+
     m, n = population.shape  # Obtains rows and columns of matrix
-=======
-    m, n = population.shape
->>>>>>> Stashed changes
     neighbours = []
     # Checks neighbouring cells above and below
     if row > 0:
-<<<<<<< Updated upstream
         neighbours.append(population[row - 1][col])  # If not on top row
     else:
         neighbours.append(population[-1][col])  # Wraps around to the bottom row
@@ -41,7 +37,7 @@ def calculate_agreement(population, row, col, external=0.0):
 
     #Checks neighbouring cells to the left and right
     if col > 0:
-        neighbors.append(population[row][col - 1])  # If not in first col
+        neighbours.append(population[row][col - 1])  # If not in first col
     else:
         neighbours.append(population[row][-1]) # Wraps around to the last col
     if col < n - 1:
@@ -50,18 +46,6 @@ def calculate_agreement(population, row, col, external=0.0):
         neighbours.append(population[row][0]) # Wraps around to the first col
 
     return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # Uses formula for Di
-=======
-        neighbours.append(population[row - 1][col])
-    if row < m - 1:
-        neighbours.append(population[row + 1][col])
-    if col > 0:
-        neighbours.append(population[row][col - 1])
-    if col < n - 1:
-        neighbours.append(population[row][col + 1])
-
-    return np.sum([i * population[row][col] for i in neighbours]) + external * population[row][
-        col]  # uses formula for Di
->>>>>>> Stashed changes
 
 
 def ising_step(population, external=0.0, alpha=1.0):
@@ -78,12 +62,11 @@ def ising_step(population, external=0.0, alpha=1.0):
     row = np.random.randint(0, n_rows)
     col = np.random.randint(0, n_cols)
 
-<<<<<<< Updated upstream
+
     #Calculate the agreement of the selected cell with its neighbours
     agreement = calculate_agreement(population, row, col, external=0.0)
-=======
-    agreement = calculate_agreement(population, row, col, external)
->>>>>>> Stashed changes
+
+
 
     # If the agreement is negative, flip the opinion of the selected cell
     if agreement < 0:
@@ -99,11 +82,10 @@ def plot_ising(im, population):
     This function will display a plot of the Ising model
     '''
 
-<<<<<<< Updated upstream
+
     # Converts the Ising model representation to an image format
     # Assigns a value of 255 to -1 (spin down) and 1 to 1 (spin up)
-=======
->>>>>>> Stashed changes
+
     new_im = np.array([[255 if val == -1 else 1 for val in rows] for rows in population], dtype=np.int8)
 
     # Update the image data for the plot with the new Ising model representation
@@ -181,7 +163,7 @@ This section contains code for the main function- you should write some code for
 
 
 def main():
-<<<<<<< Updated upstream
+
     parser = argparse.ArgumentParser() # Create parser object
 
     parser.add_argument('-ising_model',action='store_true') # Add ising_model flag
@@ -199,22 +181,12 @@ def main():
     if args.test_ising:
         # Run test_ising function
         test_ising()
-=======
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-ising_model', action='store_true')
-    parser.add_argument('-external', type=float, default=0.0)
-    parser.add_argument('-test_ising', action='store_true')
-    parser.add_argument('-alpha', type=float, default=1.0)
-    args = parser.parse_args()
-    if args.ising_model:
-        population = np.random.choice([-1, 1], size=(10, 10))
-        ising_main(population, external=args.external, alpha=args.alpha)
-    if args.test_ising:
-        test_ising()
+
+
 
 
 # You should write some code for handling flags here
->>>>>>> Stashed changes
+
 
 if __name__ == "__main__":
     main()
