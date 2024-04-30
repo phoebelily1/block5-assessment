@@ -63,10 +63,11 @@ class Network:
                 self.nodes[new_node.index].connections[i] = i
 
 
-    def plot(self):
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.set_axis_off()
+    def plot(self,ax=None):
+        if ax is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            ax.set_axis_off()
 
         num_nodes = len(self.nodes)
         network_radius = num_nodes * 10
@@ -112,6 +113,7 @@ class Network:
                     neighbour_y = network_radius * np.sin(neighbour_angle)
 
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
+    plt.pause(0.01)
 
 def calculate_agreement(population, row=0, col=0, node_index=0, external=0.0):
     '''
@@ -270,6 +272,9 @@ def ising_main(population, alpha=None, external=0.0,N=10):
             plot_ising(im, population)
     else:
         population.make_small_world_network(N,p=0.2)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_axis_off()
         # Iterating an update 100 times
         for frame in range(100):
             # Iterating single steps 1000 times to form an update
