@@ -160,27 +160,35 @@ def ising_step(population, external=0.0, alpha=1.0):
     Inputs: population (numpy array)
             external (float) - optional - the magnitude of any external "pull" on opinion
     '''
+    if type(population) != Network:
+        # Extract dimensions of the population matrix
+        n_rows, n_cols = population.shape
 
-    # Extract dimensions of the population matrix
-    n_rows, n_cols = population.shape
-
-    # Randomly selects a cell in the population matrix
-    row = np.random.randint(0, n_rows)
-    col = np.random.randint(0, n_cols)
-
-
-    #Calculate the agreement of the selected cell with its neighbours
-    agreement = calculate_agreement(population, row, col, external=0.0)
+        # Randomly selects a cell in the population matrix
+        row = np.random.randint(0, n_rows)
+        col = np.random.randint(0, n_cols)
 
 
+        #Calculate the agreement of the selected cell with its neighbours
+        agreement = calculate_agreement(population, row, col, external=0.0)
 
-    # If the agreement is negative, flip the opinion of the selected cell
-    if agreement < 0:
-        population[row, col] *= -1
-    # If the agreement is positive, calculate a probability to accept the flip
-    elif np.random.rand() < np.exp(-agreement / alpha):
-        population[row, col] *= -1
+
+
+        # If the agreement is negative, flip the opinion of the selected cell
+        if agreement < 0:
+            population[row, col] *= -1
+        # If the agreement is positive, calculate a probability to accept the flip
+        elif np.random.rand() < np.exp(-agreement / alpha):
+            population[row, col] *= -1
     # Uses formula to accept negative flips, basically generating a random probability and then compares to formula
+    else:
+        node_index = np.random.randint(0,len(population.nodes))
+        node = population.nodes[node_index]
+        agreement = calculate_agreement(population,external=external,alpha=alpha,node_index=node_index)
+        if agreement < 0:
+            node.value *= -1
+        elif np.random.rand() < np.exp(-agreement/alpha):
+            node.valie *= -1
 
 
 def plot_ising(im, population):
