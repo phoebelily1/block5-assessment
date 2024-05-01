@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import argparse
+import random
 
 class Node:
 
@@ -33,12 +34,11 @@ class Network:
         self.nodes = []
         nodes = list(range(n))
         for node in nodes:
-            edges = []
+            node_edges = [0 for i in range(n)]
             for i in range(1, k + 1):
-                edges.append((node, (node - i) % n))  # Connect to k previous neighbors (circular)
-                edges.append((node, (node + i) % n))  # Connect to k next neighbors (circular)
-            self.nodes.append(Node(np.random.choice([1.0,-1.0]),node,edges))
-
+                node_edges[(node - i) % n] = (node - i) % n # Add neighbor indices to node_edges
+                node_edges[(node + i) % n] = (node + i) % n
+            self.nodes.append(Node(np.random.choice([1.0, -1.0]), node, node_edges))
 
 
     def make_small_world_network(self, n, p=0.2):
@@ -52,15 +52,15 @@ class Network:
             tuple: A tuple containing the list of nodes and the list of edges.
         """
         self.nodes=[]
-        self.create_ring_network(n,k=2)
+        self.make_ring_network(n,k=2)
         for i, node in enumerate(self.nodes):
             if np.random.rand() < p:
-                new_node = random.choice(nodes)
+                new_node_dest = random.randrange(0,n-1)
                 # Ensure new edge does not create self-loops or duplicate edges
-                while new_node == edge[0] or (edge[0], new_node) in edges or (new_node, edge[0]) in edges:
-                    new_node = random.choice(nodes)
-                node.connections[new_node.index] = new_node.index
-                self.nodes[new_node.index].connections[i] = i
+                while new_node_dest == node.index or new_node_dest in node.connections:
+                    new_node_dest = random.randrange(0,n-1)
+                node.connections[new_node_dest] = new_node_dest
+                self.nodes[new_node_dest].connections[i] = i
 
 
     def plot(self,ax=None):
@@ -89,31 +89,7 @@ class Network:
                     neighbour_y = network_radius * np.sin(neighbour_angle)
 
                     ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.set_axis_off()
-
-        num_nodes = len(self.nodes)
-        network_radius = num_nodes * 10
-        ax.set_xlim([-1.1 * network_radius, 1.1 * network_radius])
-        ax.set_ylim([-1.1 * network_radius, 1.1 * network_radius])
-
-        for (i, node) in enumerate(self.nodes):
-            node_angle = i * 2 * np.pi / num_nodes
-            node_x = network_radius * np.cos(node_angle)
-            node_y = network_radius * np.sin(node_angle)
-
-            circle = plt.Circle((node_x, node_y), 0.3 * num_nodes, color=cm.hot(node.value))
-            ax.add_patch(circle)
-
-            for neighbour_index in range(i + 1, num_nodes):
-                if node.connections[neighbour_index]:
-                    neighbour_angle = neighbour_index * 2 * np.pi / num_nodes
-                    neighbour_x = network_radius * np.cos(neighbour_angle)
-                    neighbour_y = network_radius * np.sin(neighbour_angle)
-
-                    ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
-    plt.pause(0.01)
+        plt.pause(0.01)
 
 def calculate_agreement(population, row=0, col=0, node_index=0, external=0.0):
     '''
@@ -153,7 +129,7 @@ def calculate_agreement(population, row=0, col=0, node_index=0, external=0.0):
         return np.sum([i*population[row][col] for i in neighbours]) + external * population[row][col] # Uses formula for Di
     else:
         node = population.nodes[node_index]
-        neighbours = [node.value for node in population.nodes if node in population]
+        neighbours = [node.value for node in population.nodes if node in node.connections]
         return np.sum([i*node.value for i in neighbours]) + external * node.value
 
 def ising_step(population, external=0.0, alpha=1.0):
@@ -186,11 +162,11 @@ def ising_step(population, external=0.0, alpha=1.0):
     else:
         node_index = np.random.randint(0,len(population.nodes))
         node = population.nodes[node_index]
-        agreement = calculate_agreement(population,external=external,alpha=alpha,node_index=node_index)
+        agreement = calculate_agreement(population,external=external,node_index=node_index)
         if agreement < 0:
             node.value *= -1
         elif np.random.rand() < np.exp(-agreement/alpha):
-            node.valie *= -1
+            node.value *= -1
 
 
 def plot_ising(im, population):
@@ -284,7 +260,7 @@ def ising_main(population, alpha=None, external=0.0,N=10):
             # Prints the current step number
             print('Step:', frame, end='\r')
             # Updates the plot
-            population.plot()
+            population.plot(ax)
 
 '''
 ==============================================================================================================
