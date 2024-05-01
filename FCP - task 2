@@ -8,7 +8,7 @@ this function generates an array of random numbers representing
 initial opinions of the population.
 '''
 
-def defuant_model(population, coupling = 0.2, threshold = 0.2, iterations = 100):
+def defuant_model(population, coupling = 0.2, threshold = 0.2, iterations = 10000):
     pop_history = [population.copy()]
     N = len(population)
     for j in range(iterations):
@@ -22,9 +22,10 @@ def defuant_model(population, coupling = 0.2, threshold = 0.2, iterations = 100)
             mean_opinion = (population[i] + population[neighbour_choice]) / 2
             population[i] += coupling * (mean_opinion - population[i])
             population[neighbour_choice] += coupling * (mean_opinion - population[neighbour_choice])
-        pop_history.append(population.copy())
+        if j%100==0:
+            pop_history.append(population.copy())
     distribution_opinions(population)
-    plot_opinions(pop_history)
+    plot_opinions(pop_history[:-1])
 
 '''
 This function updates opinions based on neighbours opinions by randomly selecting an individual
@@ -46,7 +47,7 @@ This function plots a histogram for distribution of opinions within population.
 
 def plot_opinions(pop_history):
     for i, population in enumerate(pop_history):
-        plt.scatter([i] * len(population), population)  # Plot each member's opinion at current timestep
+        plt.scatter([i]*len(population), population, c='r')
     plt.title('Opinions over time')
     plt.xlabel('Timestep')
     plt.ylabel('Opinion')
@@ -68,8 +69,8 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Defuant Model Simulation") #command line arguments
     parser.add_argument("-pop_size", type=int, default=100)
-    parser.add_argument("-coupling", type=float, default=0.2)
-    parser.add_argument("-threshold", type=float, default=0.2)
+    parser.add_argument("-coupling", type=float, default=0.5)
+    parser.add_argument("-threshold", type=float, default=0.5)
     parser.add_argument("-test_defuant")
     args = parser.parse_args()
 
