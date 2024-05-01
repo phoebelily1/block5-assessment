@@ -114,7 +114,7 @@ def calculate_agreement(population, row=0, col=0, node_index=0, external=0.0):
         if row < m - 1:
             neighbours.append(population[row + 1][col])  # If not on bottom row
         else:
-            neighbours.append(population[0])[col] # Wraps around to the top row
+            neighbours.append(population[0][col]) # Wraps around to the top row
 
         #Checks neighbouring cells to the left and right
         if col > 0:
@@ -148,7 +148,7 @@ def ising_step(population, external=0.0, alpha=1.0):
 
 
         #Calculate the agreement of the selected cell with its neighbours
-        agreement = calculate_agreement(population, row, col, external=0.0)
+        agreement = calculate_agreement(population, row, col, external=external)
 
 
 
@@ -167,6 +167,7 @@ def ising_step(population, external=0.0, alpha=1.0):
             node.value *= -1
         elif np.random.rand() < np.exp(-agreement/alpha):
             node.value *= -1
+
 
 
 def plot_ising(im, population):
@@ -226,7 +227,7 @@ def test_ising():
     print("Tests passed")
 
 
-def ising_main(population, alpha=None, external=0.0,N=10):
+def ising_main(population, alpha=1.0, external=0.0,N=10):
     if type(population) != Network:
         # Creates a figure for plotting
         fig = plt.figure()
@@ -241,13 +242,14 @@ def ising_main(population, alpha=None, external=0.0,N=10):
             # Iterating single steps 1000 times to form an update
             for step in range(1000):
                 # Performs 1 step of the update
-                ising_step(population, external)
+                ising_step(population, external, alpha)
             # Prints the current step number
             print('Step:', frame, end='\r')
             # Updates the plot
             plot_ising(im, population)
     else:
         population.make_small_world_network(N,p=0.2)
+        means = []
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_axis_off()
@@ -257,10 +259,20 @@ def ising_main(population, alpha=None, external=0.0,N=10):
             for step in range(1000):
                 # Performs 1 step of the update
                 ising_step(population, external, alpha)
+            means.append(np.sum([node.value for node in population.nodes]) / len(population.nodes))
             # Prints the current step number
             print('Step:', frame, end='\r')
             # Updates the plot
             population.plot(ax)
+        print(means)
+        plt.figure()
+        time_points = list(range(len(means)))
+        print(time_points)
+        plt.plot(time_points,means)
+        plt.xlabel('Time')
+        plt.ylabel('Mean value')
+        plt.title('Mean opinion of network over time')
+        plt.show()
 
 '''
 ==============================================================================================================
@@ -282,8 +294,8 @@ def main():
 
     # If given ising_model
     if args.ising_model:
-        population = np.random.choice([-1, 1], size=(10, 10)) # Initalise random population
-        ising_main(population,args.external,args.alpha) # Run ising_main
+        population = np.random.choice([-1, 1], size=(100, 100)) # Initalise random population
+        ising_main(population,args.alpha,args.external) # Run ising_main
 
     # If test_ising flag is present
     if args.test_ising:
